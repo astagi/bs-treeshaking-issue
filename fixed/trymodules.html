@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css" />
     <title>Bootstrap Demo</title>
     <script type="importmap">
         {
             "imports": {
-                "@popperjs/core": "./bootstrap/node_modules/@popperjs/core/dist/esm/index.js"
+                "@popperjs/core": "/bootstrap/node_modules/@popperjs/core/dist/esm/index.js"
             }
         }
     </script>
@@ -53,7 +53,7 @@
         </div>
     </div>
     <script async type="module">
-        import { Alert, Tooltip } from './bootstrap/dist/js/bootstrap.esm.js'
+        import { Alert, Tooltip } from '/bootstrap/dist/js/bootstrap.esm.js'
 
         const alert = new Alert(document.getElementsByClassName('alert')[0])
 
