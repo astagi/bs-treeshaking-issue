@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.css" />
+    <title>Bootstrap Demo</title>
+    <script type="importmap">
+        {
+            "imports": {
+                "@popperjs/core": "./node_modules/@popperjs/core/dist/esm/index.js"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Bootstrap Tree shaking issue</h1>
+    <div class="alert alert-danger" role="alert">
+        Example alerti with a <a href="#" class="alert-link">link</a> (Expires within 5 seconds).
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card-wrapper card-space">
+                    <div class="card card-bg">
+                        <div class="card-body">
+                            <h5 class="card-title">La città nuova, Alda Merini</h5>
+                            <p class="card-text"> Ecco un <a href="#" class="ttp" title="First tooltip">bianco
+                                    scenario</a><br />
+                                per tratteggiarvi l’accompagnamento<br />
+                                degli oggetti di sfondo che pur vivono.<br />
+                                Non ne sarò <a href="#" class="ttp" title="Second tooltip">l’artefice</a>
+                                impaziente.<br />
+                                Berrò alle coppe della nostalgia,<br />
+                                avrò preteso d’ozio nelle lacrime...<br />
+                                perché non mi ribello alla natura:<br />
+                                la mia lentezza li esaspera...<br />
+                                La mia lentezza? No, la mia fiducia.<br />
+                                Per adesso è deserto.<br />
+                                <a href="#" class="ttp" title="Third tooltip">Il mondo può rifarsi senza me</a>,<br />
+                                E intanto gli altri mi denigreranno
+                            </p>
+                            <a class="read-more" href="#">
+                                <span class="text">Read more</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script async type="module">
+        import { Alert, Tooltip } from './node_modules/bootstrap/dist/js/bootstrap.esm.js'
+
+        const alert = new Alert(document.getElementsByClassName('alert')[0])
+
+        setTimeout(() => {
+            alert.close()
+        }, 5000);
+
+        document.querySelectorAll('.ttp').forEach(el => {
+            new Tooltip(el);
+        });
+    </script>
+</body>
+
+</html>
