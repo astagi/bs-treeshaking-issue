@@ -9,7 +9,7 @@ const banner = require('./banner.js')
 const BUNDLE = process.env.BUNDLE === 'true'
 const ESM = process.env.ESM === 'true'
 
-let fileDestination = `bootstrap`
+let fileDestination = `bootstrap${ESM ? '.esm' : ''}`
 const external = ['@popperjs/core']
 const plugins = [
   babel({
@@ -41,9 +41,10 @@ const rollupConfig = {
   input: path.resolve(__dirname, `../js/index.${ESM ? 'esm' : 'umd'}.js`),
   output: {
     banner: banner(),
+    file: path.resolve(__dirname, `../dist/js/${fileDestination}.js`),
     format: ESM ? 'esm' : 'umd',
     globals,
-    generatedCode: 'es2015',
+    generatedCode: 'es2015'
   },
   external,
   plugins
@@ -51,11 +52,6 @@ const rollupConfig = {
 
 if (!ESM) {
   rollupConfig.output.name = 'bootstrap'
-  rollupConfig.output.file = path.resolve(__dirname, `../dist/js/${fileDestination}.js`)
-} else {
-  rollupConfig.output.preserveModules = true
-  rollupConfig.output.dir = 'dist/js'
-  rollupConfig.output.exports = 'named'
 }
 
 module.exports = rollupConfig

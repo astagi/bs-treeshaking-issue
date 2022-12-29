@@ -477,7 +477,6 @@
     }
     return obj;
   }
-  const EventHandler$1 = EventHandler;
 
   /**
    * --------------------------------------------------------------------------
@@ -583,7 +582,6 @@
       return normalizeData(element.getAttribute(`data-bs-${normalizeDataKey(key)}`));
     }
   };
-  const Manipulator$1 = Manipulator;
 
   /**
    * --------------------------------------------------------------------------
@@ -617,12 +615,12 @@
       return config;
     }
     _mergeConfigObj(config, element) {
-      const jsonConfig = isElement$1(element) ? Manipulator$1.getDataAttribute(element, 'config') : {}; // try to parse
+      const jsonConfig = isElement$1(element) ? Manipulator.getDataAttribute(element, 'config') : {}; // try to parse
 
       return {
         ...this.constructor.Default,
         ...(typeof jsonConfig === 'object' ? jsonConfig : {}),
-        ...(isElement$1(element) ? Manipulator$1.getDataAttributes(element) : {}),
+        ...(isElement$1(element) ? Manipulator.getDataAttributes(element) : {}),
         ...(typeof config === 'object' ? config : {})
       };
     }
@@ -636,7 +634,6 @@
       }
     }
   }
-  const Config$1 = Config;
 
   /**
    * --------------------------------------------------------------------------
@@ -655,7 +652,7 @@
    * Class definition
    */
 
-  class BaseComponent extends Config$1 {
+  class BaseComponent extends Config {
     constructor(element, config) {
       super();
       element = getElement(element);
@@ -670,7 +667,7 @@
     // Public
     dispose() {
       Data.remove(this._element, this.constructor.DATA_KEY);
-      EventHandler$1.off(this._element, this.constructor.EVENT_KEY);
+      EventHandler.off(this._element, this.constructor.EVENT_KEY);
       for (const propertyName of Object.getOwnPropertyNames(this)) {
         this[propertyName] = null;
       }
@@ -705,7 +702,6 @@
       return `${name}${this.EVENT_KEY}`;
     }
   }
-  const BaseComponent$1 = BaseComponent;
 
   /**
    * --------------------------------------------------------------------------
@@ -794,7 +790,6 @@
       return selector ? SelectorEngine.find(selector) : [];
     }
   };
-  const SelectorEngine$1 = SelectorEngine;
 
   /**
    * --------------------------------------------------------------------------
@@ -805,14 +800,14 @@
   const enableDismissTrigger = (component, method = 'hide') => {
     const clickEvent = `click.dismiss${component.EVENT_KEY}`;
     const name = component.NAME;
-    EventHandler$1.on(document, clickEvent, `[data-bs-dismiss="${name}"]`, function (event) {
+    EventHandler.on(document, clickEvent, `[data-bs-dismiss="${name}"]`, function (event) {
       if (['A', 'AREA'].includes(this.tagName)) {
         event.preventDefault();
       }
       if (isDisabled(this)) {
         return;
       }
-      const target = SelectorEngine$1.getElementFromSelector(this) || this.closest(`.${name}`);
+      const target = SelectorEngine.getElementFromSelector(this) || this.closest(`.${name}`);
       const instance = component.getOrCreateInstance(target);
 
       // Method argument is left, for Alert and only, as it doesn't implement the 'hide' method
@@ -843,7 +838,7 @@
    * Class definition
    */
 
-  class Alert extends BaseComponent$1 {
+  class Alert extends BaseComponent {
     // Getters
     static get NAME() {
       return NAME$f;
@@ -851,7 +846,7 @@
 
     // Public
     close() {
-      const closeEvent = EventHandler$1.trigger(this._element, EVENT_CLOSE);
+      const closeEvent = EventHandler.trigger(this._element, EVENT_CLOSE);
       if (closeEvent.defaultPrevented) {
         return;
       }
@@ -863,7 +858,7 @@
     // Private
     _destroyElement() {
       this._element.remove();
-      EventHandler$1.trigger(this._element, EVENT_CLOSED);
+      EventHandler.trigger(this._element, EVENT_CLOSED);
       this.dispose();
     }
 
@@ -893,7 +888,6 @@
    */
 
   defineJQueryPlugin(Alert);
-  const Alert$1 = Alert;
 
   /**
    * --------------------------------------------------------------------------
@@ -918,7 +912,7 @@
    * Class definition
    */
 
-  class Button extends BaseComponent$1 {
+  class Button extends BaseComponent {
     // Getters
     static get NAME() {
       return NAME$e;
@@ -945,7 +939,7 @@
    * Data API implementation
    */
 
-  EventHandler$1.on(document, EVENT_CLICK_DATA_API$6, SELECTOR_DATA_TOGGLE$5, event => {
+  EventHandler.on(document, EVENT_CLICK_DATA_API$6, SELECTOR_DATA_TOGGLE$5, event => {
     event.preventDefault();
     const button = event.target.closest(SELECTOR_DATA_TOGGLE$5);
     const data = Button.getOrCreateInstance(button);
@@ -957,7 +951,6 @@
    */
 
   defineJQueryPlugin(Button);
-  const Button$1 = Button;
 
   /**
    * --------------------------------------------------------------------------
@@ -996,7 +989,7 @@
    * Class definition
    */
 
-  class Swipe extends Config$1 {
+  class Swipe extends Config {
     constructor(element, config) {
       super();
       this._element = element;
@@ -1022,7 +1015,7 @@
 
     // Public
     dispose() {
-      EventHandler$1.off(this._element, EVENT_KEY$9);
+      EventHandler.off(this._element, EVENT_KEY$9);
     }
 
     // Private
@@ -1059,13 +1052,13 @@
     }
     _initEvents() {
       if (this._supportPointerEvents) {
-        EventHandler$1.on(this._element, EVENT_POINTERDOWN, event => this._start(event));
-        EventHandler$1.on(this._element, EVENT_POINTERUP, event => this._end(event));
+        EventHandler.on(this._element, EVENT_POINTERDOWN, event => this._start(event));
+        EventHandler.on(this._element, EVENT_POINTERUP, event => this._end(event));
         this._element.classList.add(CLASS_NAME_POINTER_EVENT);
       } else {
-        EventHandler$1.on(this._element, EVENT_TOUCHSTART, event => this._start(event));
-        EventHandler$1.on(this._element, EVENT_TOUCHMOVE, event => this._move(event));
-        EventHandler$1.on(this._element, EVENT_TOUCHEND, event => this._end(event));
+        EventHandler.on(this._element, EVENT_TOUCHSTART, event => this._start(event));
+        EventHandler.on(this._element, EVENT_TOUCHMOVE, event => this._move(event));
+        EventHandler.on(this._element, EVENT_TOUCHEND, event => this._end(event));
       }
     }
     _eventIsPointerPenTouch(event) {
@@ -1077,7 +1070,6 @@
       return 'ontouchstart' in document.documentElement || navigator.maxTouchPoints > 0;
     }
   }
-  const Swipe$1 = Swipe;
 
   /**
    * --------------------------------------------------------------------------
@@ -1150,7 +1142,7 @@
    * Class definition
    */
 
-  class Carousel extends BaseComponent$1 {
+  class Carousel extends BaseComponent {
     constructor(element, config) {
       super(element, config);
       this._interval = null;
@@ -1158,7 +1150,7 @@
       this._isSliding = false;
       this.touchTimeout = null;
       this._swipeHelper = null;
-      this._indicatorsElement = SelectorEngine$1.findOne(SELECTOR_INDICATORS, this._element);
+      this._indicatorsElement = SelectorEngine.findOne(SELECTOR_INDICATORS, this._element);
       this._addEventListeners();
       if (this._config.ride === CLASS_NAME_CAROUSEL) {
         this.cycle();
@@ -1207,7 +1199,7 @@
         return;
       }
       if (this._isSliding) {
-        EventHandler$1.one(this._element, EVENT_SLID, () => this.cycle());
+        EventHandler.one(this._element, EVENT_SLID, () => this.cycle());
         return;
       }
       this.cycle();
@@ -1218,7 +1210,7 @@
         return;
       }
       if (this._isSliding) {
-        EventHandler$1.one(this._element, EVENT_SLID, () => this.to(index));
+        EventHandler.one(this._element, EVENT_SLID, () => this.to(index));
         return;
       }
       const activeIndex = this._getItemIndex(this._getActive());
@@ -1242,19 +1234,19 @@
     }
     _addEventListeners() {
       if (this._config.keyboard) {
-        EventHandler$1.on(this._element, EVENT_KEYDOWN$1, event => this._keydown(event));
+        EventHandler.on(this._element, EVENT_KEYDOWN$1, event => this._keydown(event));
       }
       if (this._config.pause === 'hover') {
-        EventHandler$1.on(this._element, EVENT_MOUSEENTER$1, () => this.pause());
-        EventHandler$1.on(this._element, EVENT_MOUSELEAVE$1, () => this._maybeEnableCycle());
+        EventHandler.on(this._element, EVENT_MOUSEENTER$1, () => this.pause());
+        EventHandler.on(this._element, EVENT_MOUSELEAVE$1, () => this._maybeEnableCycle());
       }
-      if (this._config.touch && Swipe$1.isSupported()) {
+      if (this._config.touch && Swipe.isSupported()) {
         this._addTouchEventListeners();
       }
     }
     _addTouchEventListeners() {
-      for (const img of SelectorEngine$1.find(SELECTOR_ITEM_IMG, this._element)) {
-        EventHandler$1.on(img, EVENT_DRAG_START, event => event.preventDefault());
+      for (const img of SelectorEngine.find(SELECTOR_ITEM_IMG, this._element)) {
+        EventHandler.on(img, EVENT_DRAG_START, event => event.preventDefault());
       }
       const endCallBack = () => {
         if (this._config.pause !== 'hover') {
@@ -1280,7 +1272,7 @@
         rightCallback: () => this._slide(this._directionToOrder(DIRECTION_RIGHT)),
         endCallback: endCallBack
       };
-      this._swipeHelper = new Swipe$1(this._element, swipeConfig);
+      this._swipeHelper = new Swipe(this._element, swipeConfig);
     }
     _keydown(event) {
       if (/input|textarea/i.test(event.target.tagName)) {
@@ -1299,10 +1291,10 @@
       if (!this._indicatorsElement) {
         return;
       }
-      const activeIndicator = SelectorEngine$1.findOne(SELECTOR_ACTIVE, this._indicatorsElement);
+      const activeIndicator = SelectorEngine.findOne(SELECTOR_ACTIVE, this._indicatorsElement);
       activeIndicator.classList.remove(CLASS_NAME_ACTIVE$2);
       activeIndicator.removeAttribute('aria-current');
-      const newActiveIndicator = SelectorEngine$1.findOne(`[data-bs-slide-to="${index}"]`, this._indicatorsElement);
+      const newActiveIndicator = SelectorEngine.findOne(`[data-bs-slide-to="${index}"]`, this._indicatorsElement);
       if (newActiveIndicator) {
         newActiveIndicator.classList.add(CLASS_NAME_ACTIVE$2);
         newActiveIndicator.setAttribute('aria-current', 'true');
@@ -1328,7 +1320,7 @@
       }
       const nextElementIndex = this._getItemIndex(nextElement);
       const triggerEvent = eventName => {
-        return EventHandler$1.trigger(this._element, eventName, {
+        return EventHandler.trigger(this._element, eventName, {
           relatedTarget: nextElement,
           direction: this._orderToDirection(order),
           from: this._getItemIndex(activeElement),
@@ -1371,10 +1363,10 @@
       return this._element.classList.contains(CLASS_NAME_SLIDE);
     }
     _getActive() {
-      return SelectorEngine$1.findOne(SELECTOR_ACTIVE_ITEM, this._element);
+      return SelectorEngine.findOne(SELECTOR_ACTIVE_ITEM, this._element);
     }
     _getItems() {
-      return SelectorEngine$1.find(SELECTOR_ITEM, this._element);
+      return SelectorEngine.find(SELECTOR_ITEM, this._element);
     }
     _clearInterval() {
       if (this._interval) {
@@ -1417,8 +1409,8 @@
    * Data API implementation
    */
 
-  EventHandler$1.on(document, EVENT_CLICK_DATA_API$5, SELECTOR_DATA_SLIDE, function (event) {
-    const target = SelectorEngine$1.getElementFromSelector(this);
+  EventHandler.on(document, EVENT_CLICK_DATA_API$5, SELECTOR_DATA_SLIDE, function (event) {
+    const target = SelectorEngine.getElementFromSelector(this);
     if (!target || !target.classList.contains(CLASS_NAME_CAROUSEL)) {
       return;
     }
@@ -1430,7 +1422,7 @@
       carousel._maybeEnableCycle();
       return;
     }
-    if (Manipulator$1.getDataAttribute(this, 'slide') === 'next') {
+    if (Manipulator.getDataAttribute(this, 'slide') === 'next') {
       carousel.next();
       carousel._maybeEnableCycle();
       return;
@@ -1438,8 +1430,8 @@
     carousel.prev();
     carousel._maybeEnableCycle();
   });
-  EventHandler$1.on(window, EVENT_LOAD_DATA_API$3, () => {
-    const carousels = SelectorEngine$1.find(SELECTOR_DATA_RIDE);
+  EventHandler.on(window, EVENT_LOAD_DATA_API$3, () => {
+    const carousels = SelectorEngine.find(SELECTOR_DATA_RIDE);
     for (const carousel of carousels) {
       Carousel.getOrCreateInstance(carousel);
     }
@@ -1450,7 +1442,6 @@
    */
 
   defineJQueryPlugin(Carousel);
-  const Carousel$1 = Carousel;
 
   /**
    * --------------------------------------------------------------------------
@@ -1495,15 +1486,15 @@
    * Class definition
    */
 
-  class Collapse extends BaseComponent$1 {
+  class Collapse extends BaseComponent {
     constructor(element, config) {
       super(element, config);
       this._isTransitioning = false;
       this._triggerArray = [];
-      const toggleList = SelectorEngine$1.find(SELECTOR_DATA_TOGGLE$4);
+      const toggleList = SelectorEngine.find(SELECTOR_DATA_TOGGLE$4);
       for (const elem of toggleList) {
-        const selector = SelectorEngine$1.getSelectorFromElement(elem);
-        const filterElement = SelectorEngine$1.find(selector).filter(foundElement => foundElement === this._element);
+        const selector = SelectorEngine.getSelectorFromElement(elem);
+        const filterElement = SelectorEngine.find(selector).filter(foundElement => foundElement === this._element);
         if (selector !== null && filterElement.length) {
           this._triggerArray.push(elem);
         }
@@ -1551,7 +1542,7 @@
       if (activeChildren.length && activeChildren[0]._isTransitioning) {
         return;
       }
-      const startEvent = EventHandler$1.trigger(this._element, EVENT_SHOW$6);
+      const startEvent = EventHandler.trigger(this._element, EVENT_SHOW$6);
       if (startEvent.defaultPrevented) {
         return;
       }
@@ -1569,7 +1560,7 @@
         this._element.classList.remove(CLASS_NAME_COLLAPSING);
         this._element.classList.add(CLASS_NAME_COLLAPSE, CLASS_NAME_SHOW$7);
         this._element.style[dimension] = '';
-        EventHandler$1.trigger(this._element, EVENT_SHOWN$6);
+        EventHandler.trigger(this._element, EVENT_SHOWN$6);
       };
       const capitalizedDimension = dimension[0].toUpperCase() + dimension.slice(1);
       const scrollSize = `scroll${capitalizedDimension}`;
@@ -1580,7 +1571,7 @@
       if (this._isTransitioning || !this._isShown()) {
         return;
       }
-      const startEvent = EventHandler$1.trigger(this._element, EVENT_HIDE$6);
+      const startEvent = EventHandler.trigger(this._element, EVENT_HIDE$6);
       if (startEvent.defaultPrevented) {
         return;
       }
@@ -1590,7 +1581,7 @@
       this._element.classList.add(CLASS_NAME_COLLAPSING);
       this._element.classList.remove(CLASS_NAME_COLLAPSE, CLASS_NAME_SHOW$7);
       for (const trigger of this._triggerArray) {
-        const element = SelectorEngine$1.getElementFromSelector(trigger);
+        const element = SelectorEngine.getElementFromSelector(trigger);
         if (element && !this._isShown(element)) {
           this._addAriaAndCollapsedClass([trigger], false);
         }
@@ -1600,7 +1591,7 @@
         this._isTransitioning = false;
         this._element.classList.remove(CLASS_NAME_COLLAPSING);
         this._element.classList.add(CLASS_NAME_COLLAPSE);
-        EventHandler$1.trigger(this._element, EVENT_HIDDEN$6);
+        EventHandler.trigger(this._element, EVENT_HIDDEN$6);
       };
       this._element.style[dimension] = '';
       this._queueCallback(complete, this._element, true);
@@ -1624,16 +1615,16 @@
       }
       const children = this._getFirstLevelChildren(SELECTOR_DATA_TOGGLE$4);
       for (const element of children) {
-        const selected = SelectorEngine$1.getElementFromSelector(element);
+        const selected = SelectorEngine.getElementFromSelector(element);
         if (selected) {
           this._addAriaAndCollapsedClass([element], this._isShown(selected));
         }
       }
     }
     _getFirstLevelChildren(selector) {
-      const children = SelectorEngine$1.find(CLASS_NAME_DEEPER_CHILDREN, this._config.parent);
+      const children = SelectorEngine.find(CLASS_NAME_DEEPER_CHILDREN, this._config.parent);
       // remove children if greater depth
-      return SelectorEngine$1.find(selector, this._config.parent).filter(element => !children.includes(element));
+      return SelectorEngine.find(selector, this._config.parent).filter(element => !children.includes(element));
     }
     _addAriaAndCollapsedClass(triggerArray, isOpen) {
       if (!triggerArray.length) {
@@ -1667,12 +1658,12 @@
    * Data API implementation
    */
 
-  EventHandler$1.on(document, EVENT_CLICK_DATA_API$4, SELECTOR_DATA_TOGGLE$4, function (event) {
+  EventHandler.on(document, EVENT_CLICK_DATA_API$4, SELECTOR_DATA_TOGGLE$4, function (event) {
     // preventDefault only for <a> elements (which change the URL) not inside the collapsible element
     if (event.target.tagName === 'A' || event.delegateTarget && event.delegateTarget.tagName === 'A') {
       event.preventDefault();
     }
-    for (const element of SelectorEngine$1.getMultipleElementsFromSelector(this)) {
+    for (const element of SelectorEngine.getMultipleElementsFromSelector(this)) {
       Collapse.getOrCreateInstance(element, {
         toggle: false
       }).toggle();
@@ -1684,7 +1675,6 @@
    */
 
   defineJQueryPlugin(Collapse);
-  const Collapse$1 = Collapse;
 
   var top = 'top';
   var bottom = 'bottom';
@@ -3601,13 +3591,13 @@
    * Class definition
    */
 
-  class Dropdown extends BaseComponent$1 {
+  class Dropdown extends BaseComponent {
     constructor(element, config) {
       super(element, config);
       this._popper = null;
       this._parent = this._element.parentNode; // dropdown wrapper
       // todo: v6 revert #37011 & change markup https://getbootstrap.com/docs/5.3/forms/input-group/
-      this._menu = SelectorEngine$1.next(this._element, SELECTOR_MENU)[0] || SelectorEngine$1.prev(this._element, SELECTOR_MENU)[0] || SelectorEngine$1.findOne(SELECTOR_MENU, this._parent);
+      this._menu = SelectorEngine.next(this._element, SELECTOR_MENU)[0] || SelectorEngine.prev(this._element, SELECTOR_MENU)[0] || SelectorEngine.findOne(SELECTOR_MENU, this._parent);
       this._inNavbar = this._detectNavbar();
     }
 
@@ -3633,7 +3623,7 @@
       const relatedTarget = {
         relatedTarget: this._element
       };
-      const showEvent = EventHandler$1.trigger(this._element, EVENT_SHOW$5, relatedTarget);
+      const showEvent = EventHandler.trigger(this._element, EVENT_SHOW$5, relatedTarget);
       if (showEvent.defaultPrevented) {
         return;
       }
@@ -3645,14 +3635,14 @@
       // https://www.quirksmode.org/blog/archives/2014/02/mouse_event_bub.html
       if ('ontouchstart' in document.documentElement && !this._parent.closest(SELECTOR_NAVBAR_NAV)) {
         for (const element of [].concat(...document.body.children)) {
-          EventHandler$1.on(element, 'mouseover', noop);
+          EventHandler.on(element, 'mouseover', noop);
         }
       }
       this._element.focus();
       this._element.setAttribute('aria-expanded', true);
       this._menu.classList.add(CLASS_NAME_SHOW$6);
       this._element.classList.add(CLASS_NAME_SHOW$6);
-      EventHandler$1.trigger(this._element, EVENT_SHOWN$5, relatedTarget);
+      EventHandler.trigger(this._element, EVENT_SHOWN$5, relatedTarget);
     }
     hide() {
       if (isDisabled(this._element) || !this._isShown()) {
@@ -3678,7 +3668,7 @@
 
     // Private
     _completeHide(relatedTarget) {
-      const hideEvent = EventHandler$1.trigger(this._element, EVENT_HIDE$5, relatedTarget);
+      const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE$5, relatedTarget);
       if (hideEvent.defaultPrevented) {
         return;
       }
@@ -3687,7 +3677,7 @@
       // empty mouseover listeners we added for iOS support
       if ('ontouchstart' in document.documentElement) {
         for (const element of [].concat(...document.body.children)) {
-          EventHandler$1.off(element, 'mouseover', noop);
+          EventHandler.off(element, 'mouseover', noop);
         }
       }
       if (this._popper) {
@@ -3696,8 +3686,8 @@
       this._menu.classList.remove(CLASS_NAME_SHOW$6);
       this._element.classList.remove(CLASS_NAME_SHOW$6);
       this._element.setAttribute('aria-expanded', 'false');
-      Manipulator$1.removeDataAttribute(this._menu, 'popper');
-      EventHandler$1.trigger(this._element, EVENT_HIDDEN$5, relatedTarget);
+      Manipulator.removeDataAttribute(this._menu, 'popper');
+      EventHandler.trigger(this._element, EVENT_HIDDEN$5, relatedTarget);
     }
     _getConfig(config) {
       config = super._getConfig(config);
@@ -3780,7 +3770,7 @@
 
       // Disable Popper if we have a static display or Dropdown is in Navbar
       if (this._inNavbar || this._config.display === 'static') {
-        Manipulator$1.setDataAttribute(this._menu, 'popper', 'static'); // todo:v6 remove
+        Manipulator.setDataAttribute(this._menu, 'popper', 'static'); // todo:v6 remove
         defaultBsPopperConfig.modifiers = [{
           name: 'applyStyles',
           enabled: false
@@ -3795,7 +3785,7 @@
       key,
       target
     }) {
-      const items = SelectorEngine$1.find(SELECTOR_VISIBLE_ITEMS, this._menu).filter(element => isVisible(element));
+      const items = SelectorEngine.find(SELECTOR_VISIBLE_ITEMS, this._menu).filter(element => isVisible(element));
       if (!items.length) {
         return;
       }
@@ -3822,7 +3812,7 @@
       if (event.button === RIGHT_MOUSE_BUTTON || event.type === 'keyup' && event.key !== TAB_KEY$1) {
         return;
       }
-      const openToggles = SelectorEngine$1.find(SELECTOR_DATA_TOGGLE_SHOWN);
+      const openToggles = SelectorEngine.find(SELECTOR_DATA_TOGGLE_SHOWN);
       for (const toggle of openToggles) {
         const context = Dropdown.getInstance(toggle);
         if (!context || context._config.autoClose === false) {
@@ -3863,7 +3853,7 @@
       event.preventDefault();
 
       // todo: v6 revert #37011 & change markup https://getbootstrap.com/docs/5.3/forms/input-group/
-      const getToggleButton = this.matches(SELECTOR_DATA_TOGGLE$3) ? this : SelectorEngine$1.prev(this, SELECTOR_DATA_TOGGLE$3)[0] || SelectorEngine$1.next(this, SELECTOR_DATA_TOGGLE$3)[0] || SelectorEngine$1.findOne(SELECTOR_DATA_TOGGLE$3, event.delegateTarget.parentNode);
+      const getToggleButton = this.matches(SELECTOR_DATA_TOGGLE$3) ? this : SelectorEngine.prev(this, SELECTOR_DATA_TOGGLE$3)[0] || SelectorEngine.next(this, SELECTOR_DATA_TOGGLE$3)[0] || SelectorEngine.findOne(SELECTOR_DATA_TOGGLE$3, event.delegateTarget.parentNode);
       const instance = Dropdown.getOrCreateInstance(getToggleButton);
       if (isUpOrDownEvent) {
         event.stopPropagation();
@@ -3884,11 +3874,11 @@
    * Data API implementation
    */
 
-  EventHandler$1.on(document, EVENT_KEYDOWN_DATA_API, SELECTOR_DATA_TOGGLE$3, Dropdown.dataApiKeydownHandler);
-  EventHandler$1.on(document, EVENT_KEYDOWN_DATA_API, SELECTOR_MENU, Dropdown.dataApiKeydownHandler);
-  EventHandler$1.on(document, EVENT_CLICK_DATA_API$3, Dropdown.clearMenus);
-  EventHandler$1.on(document, EVENT_KEYUP_DATA_API, Dropdown.clearMenus);
-  EventHandler$1.on(document, EVENT_CLICK_DATA_API$3, SELECTOR_DATA_TOGGLE$3, function (event) {
+  EventHandler.on(document, EVENT_KEYDOWN_DATA_API, SELECTOR_DATA_TOGGLE$3, Dropdown.dataApiKeydownHandler);
+  EventHandler.on(document, EVENT_KEYDOWN_DATA_API, SELECTOR_MENU, Dropdown.dataApiKeydownHandler);
+  EventHandler.on(document, EVENT_CLICK_DATA_API$3, Dropdown.clearMenus);
+  EventHandler.on(document, EVENT_KEYUP_DATA_API, Dropdown.clearMenus);
+  EventHandler.on(document, EVENT_CLICK_DATA_API$3, SELECTOR_DATA_TOGGLE$3, function (event) {
     event.preventDefault();
     Dropdown.getOrCreateInstance(this).toggle();
   });
@@ -3898,7 +3888,6 @@
    */
 
   defineJQueryPlugin(Dropdown);
-  const Dropdown$1 = Dropdown;
 
   /**
    * --------------------------------------------------------------------------
@@ -3970,18 +3959,18 @@
     _saveInitialAttribute(element, styleProperty) {
       const actualValue = element.style.getPropertyValue(styleProperty);
       if (actualValue) {
-        Manipulator$1.setDataAttribute(element, styleProperty, actualValue);
+        Manipulator.setDataAttribute(element, styleProperty, actualValue);
       }
     }
     _resetElementAttributes(selector, styleProperty) {
       const manipulationCallBack = element => {
-        const value = Manipulator$1.getDataAttribute(element, styleProperty);
+        const value = Manipulator.getDataAttribute(element, styleProperty);
         // We only want to remove the property if the value is `null`; the value can also be zero
         if (value === null) {
           element.style.removeProperty(styleProperty);
           return;
         }
-        Manipulator$1.removeDataAttribute(element, styleProperty);
+        Manipulator.removeDataAttribute(element, styleProperty);
         element.style.setProperty(styleProperty, value);
       };
       this._applyManipulationCallback(selector, manipulationCallBack);
@@ -3991,12 +3980,11 @@
         callBack(selector);
         return;
       }
-      for (const sel of SelectorEngine$1.find(selector, this._element)) {
+      for (const sel of SelectorEngine.find(selector, this._element)) {
         callBack(sel);
       }
     }
   }
-  const ScrollBarHelper$1 = ScrollBarHelper;
 
   /**
    * --------------------------------------------------------------------------
@@ -4034,7 +4022,7 @@
    * Class definition
    */
 
-  class Backdrop extends Config$1 {
+  class Backdrop extends Config {
     constructor(config) {
       super();
       this._config = this._getConfig(config);
@@ -4084,7 +4072,7 @@
       if (!this._isAppended) {
         return;
       }
-      EventHandler$1.off(this._element, EVENT_MOUSEDOWN);
+      EventHandler.off(this._element, EVENT_MOUSEDOWN);
       this._element.remove();
       this._isAppended = false;
     }
@@ -4112,7 +4100,7 @@
       }
       const element = this._getElement();
       this._config.rootElement.append(element);
-      EventHandler$1.on(element, EVENT_MOUSEDOWN, () => {
+      EventHandler.on(element, EVENT_MOUSEDOWN, () => {
         execute(this._config.clickCallback);
       });
       this._isAppended = true;
@@ -4121,7 +4109,6 @@
       executeAfterTransition(callback, this._getElement(), this._config.isAnimated);
     }
   }
-  const Backdrop$1 = Backdrop;
 
   /**
    * --------------------------------------------------------------------------
@@ -4156,7 +4143,7 @@
    * Class definition
    */
 
-  class FocusTrap extends Config$1 {
+  class FocusTrap extends Config {
     constructor(config) {
       super();
       this._config = this._getConfig(config);
@@ -4183,9 +4170,9 @@
       if (this._config.autofocus) {
         this._config.trapElement.focus();
       }
-      EventHandler$1.off(document, EVENT_KEY$5); // guard against infinite focus loop
-      EventHandler$1.on(document, EVENT_FOCUSIN$2, event => this._handleFocusin(event));
-      EventHandler$1.on(document, EVENT_KEYDOWN_TAB, event => this._handleKeydown(event));
+      EventHandler.off(document, EVENT_KEY$5); // guard against infinite focus loop
+      EventHandler.on(document, EVENT_FOCUSIN$2, event => this._handleFocusin(event));
+      EventHandler.on(document, EVENT_KEYDOWN_TAB, event => this._handleKeydown(event));
       this._isActive = true;
     }
     deactivate() {
@@ -4193,7 +4180,7 @@
         return;
       }
       this._isActive = false;
-      EventHandler$1.off(document, EVENT_KEY$5);
+      EventHandler.off(document, EVENT_KEY$5);
     }
 
     // Private
@@ -4204,7 +4191,7 @@
       if (event.target === document || event.target === trapElement || trapElement.contains(event.target)) {
         return;
       }
-      const elements = SelectorEngine$1.focusableChildren(trapElement);
+      const elements = SelectorEngine.focusableChildren(trapElement);
       if (elements.length === 0) {
         trapElement.focus();
       } else if (this._lastTabNavDirection === TAB_NAV_BACKWARD) {
@@ -4220,7 +4207,6 @@
       this._lastTabNavDirection = event.shiftKey ? TAB_NAV_BACKWARD : TAB_NAV_FORWARD;
     }
   }
-  const FocusTrap$1 = FocusTrap;
 
   /**
    * --------------------------------------------------------------------------
@@ -4271,15 +4257,15 @@
    * Class definition
    */
 
-  class Modal extends BaseComponent$1 {
+  class Modal extends BaseComponent {
     constructor(element, config) {
       super(element, config);
-      this._dialog = SelectorEngine$1.findOne(SELECTOR_DIALOG, this._element);
+      this._dialog = SelectorEngine.findOne(SELECTOR_DIALOG, this._element);
       this._backdrop = this._initializeBackDrop();
       this._focustrap = this._initializeFocusTrap();
       this._isShown = false;
       this._isTransitioning = false;
-      this._scrollBar = new ScrollBarHelper$1();
+      this._scrollBar = new ScrollBarHelper();
       this._addEventListeners();
     }
 
@@ -4302,7 +4288,7 @@
       if (this._isShown || this._isTransitioning) {
         return;
       }
-      const showEvent = EventHandler$1.trigger(this._element, EVENT_SHOW$4, {
+      const showEvent = EventHandler.trigger(this._element, EVENT_SHOW$4, {
         relatedTarget
       });
       if (showEvent.defaultPrevented) {
@@ -4319,7 +4305,7 @@
       if (!this._isShown || this._isTransitioning) {
         return;
       }
-      const hideEvent = EventHandler$1.trigger(this._element, EVENT_HIDE$4);
+      const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE$4);
       if (hideEvent.defaultPrevented) {
         return;
       }
@@ -4331,7 +4317,7 @@
     }
     dispose() {
       for (const htmlElement of [window, this._dialog]) {
-        EventHandler$1.off(htmlElement, EVENT_KEY$4);
+        EventHandler.off(htmlElement, EVENT_KEY$4);
       }
       this._backdrop.dispose();
       this._focustrap.deactivate();
@@ -4343,14 +4329,14 @@
 
     // Private
     _initializeBackDrop() {
-      return new Backdrop$1({
+      return new Backdrop({
         isVisible: Boolean(this._config.backdrop),
         // 'static' option will be translated to true, and booleans will keep their value,
         isAnimated: this._isAnimated()
       });
     }
     _initializeFocusTrap() {
-      return new FocusTrap$1({
+      return new FocusTrap({
         trapElement: this._element
       });
     }
@@ -4364,7 +4350,7 @@
       this._element.setAttribute('aria-modal', true);
       this._element.setAttribute('role', 'dialog');
       this._element.scrollTop = 0;
-      const modalBody = SelectorEngine$1.findOne(SELECTOR_MODAL_BODY, this._dialog);
+      const modalBody = SelectorEngine.findOne(SELECTOR_MODAL_BODY, this._dialog);
       if (modalBody) {
         modalBody.scrollTop = 0;
       }
@@ -4375,14 +4361,14 @@
           this._focustrap.activate();
         }
         this._isTransitioning = false;
-        EventHandler$1.trigger(this._element, EVENT_SHOWN$4, {
+        EventHandler.trigger(this._element, EVENT_SHOWN$4, {
           relatedTarget
         });
       };
       this._queueCallback(transitionComplete, this._dialog, this._isAnimated());
     }
     _addEventListeners() {
-      EventHandler$1.on(this._element, EVENT_KEYDOWN_DISMISS$1, event => {
+      EventHandler.on(this._element, EVENT_KEYDOWN_DISMISS$1, event => {
         if (event.key !== ESCAPE_KEY$1) {
           return;
         }
@@ -4393,14 +4379,14 @@
         }
         this._triggerBackdropTransition();
       });
-      EventHandler$1.on(window, EVENT_RESIZE$1, () => {
+      EventHandler.on(window, EVENT_RESIZE$1, () => {
         if (this._isShown && !this._isTransitioning) {
           this._adjustDialog();
         }
       });
-      EventHandler$1.on(this._element, EVENT_MOUSEDOWN_DISMISS, event => {
+      EventHandler.on(this._element, EVENT_MOUSEDOWN_DISMISS, event => {
         // a bad trick to segregate clicks that may start inside dialog but end outside, and avoid listen to scrollbar clicks
-        EventHandler$1.one(this._element, EVENT_CLICK_DISMISS, event2 => {
+        EventHandler.one(this._element, EVENT_CLICK_DISMISS, event2 => {
           if (this._element !== event.target || this._element !== event2.target) {
             return;
           }
@@ -4424,14 +4410,14 @@
         document.body.classList.remove(CLASS_NAME_OPEN);
         this._resetAdjustments();
         this._scrollBar.reset();
-        EventHandler$1.trigger(this._element, EVENT_HIDDEN$4);
+        EventHandler.trigger(this._element, EVENT_HIDDEN$4);
       });
     }
     _isAnimated() {
       return this._element.classList.contains(CLASS_NAME_FADE$3);
     }
     _triggerBackdropTransition() {
-      const hideEvent = EventHandler$1.trigger(this._element, EVENT_HIDE_PREVENTED$1);
+      const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE_PREVENTED$1);
       if (hideEvent.defaultPrevented) {
         return;
       }
@@ -4495,17 +4481,17 @@
    * Data API implementation
    */
 
-  EventHandler$1.on(document, EVENT_CLICK_DATA_API$2, SELECTOR_DATA_TOGGLE$2, function (event) {
-    const target = SelectorEngine$1.getElementFromSelector(this);
+  EventHandler.on(document, EVENT_CLICK_DATA_API$2, SELECTOR_DATA_TOGGLE$2, function (event) {
+    const target = SelectorEngine.getElementFromSelector(this);
     if (['A', 'AREA'].includes(this.tagName)) {
       event.preventDefault();
     }
-    EventHandler$1.one(target, EVENT_SHOW$4, showEvent => {
+    EventHandler.one(target, EVENT_SHOW$4, showEvent => {
       if (showEvent.defaultPrevented) {
         // only register focus restorer if modal will actually get shown
         return;
       }
-      EventHandler$1.one(target, EVENT_HIDDEN$4, () => {
+      EventHandler.one(target, EVENT_HIDDEN$4, () => {
         if (isVisible(this)) {
           this.focus();
         }
@@ -4513,7 +4499,7 @@
     });
 
     // avoid conflict when clicking modal toggler while another one is open
-    const alreadyOpen = SelectorEngine$1.findOne(OPEN_SELECTOR$1);
+    const alreadyOpen = SelectorEngine.findOne(OPEN_SELECTOR$1);
     if (alreadyOpen) {
       Modal.getInstance(alreadyOpen).hide();
     }
@@ -4527,7 +4513,6 @@
    */
 
   defineJQueryPlugin(Modal);
-  const Modal$1 = Modal;
 
   /**
    * --------------------------------------------------------------------------
@@ -4575,7 +4560,7 @@
    * Class definition
    */
 
-  class Offcanvas extends BaseComponent$1 {
+  class Offcanvas extends BaseComponent {
     constructor(element, config) {
       super(element, config);
       this._isShown = false;
@@ -4603,7 +4588,7 @@
       if (this._isShown) {
         return;
       }
-      const showEvent = EventHandler$1.trigger(this._element, EVENT_SHOW$3, {
+      const showEvent = EventHandler.trigger(this._element, EVENT_SHOW$3, {
         relatedTarget
       });
       if (showEvent.defaultPrevented) {
@@ -4612,7 +4597,7 @@
       this._isShown = true;
       this._backdrop.show();
       if (!this._config.scroll) {
-        new ScrollBarHelper$1().hide();
+        new ScrollBarHelper().hide();
       }
       this._element.setAttribute('aria-modal', true);
       this._element.setAttribute('role', 'dialog');
@@ -4623,7 +4608,7 @@
         }
         this._element.classList.add(CLASS_NAME_SHOW$3);
         this._element.classList.remove(CLASS_NAME_SHOWING$1);
-        EventHandler$1.trigger(this._element, EVENT_SHOWN$3, {
+        EventHandler.trigger(this._element, EVENT_SHOWN$3, {
           relatedTarget
         });
       };
@@ -4633,7 +4618,7 @@
       if (!this._isShown) {
         return;
       }
-      const hideEvent = EventHandler$1.trigger(this._element, EVENT_HIDE$3);
+      const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE$3);
       if (hideEvent.defaultPrevented) {
         return;
       }
@@ -4647,9 +4632,9 @@
         this._element.removeAttribute('aria-modal');
         this._element.removeAttribute('role');
         if (!this._config.scroll) {
-          new ScrollBarHelper$1().reset();
+          new ScrollBarHelper().reset();
         }
-        EventHandler$1.trigger(this._element, EVENT_HIDDEN$3);
+        EventHandler.trigger(this._element, EVENT_HIDDEN$3);
       };
       this._queueCallback(completeCallback, this._element, true);
     }
@@ -4663,7 +4648,7 @@
     _initializeBackDrop() {
       const clickCallback = () => {
         if (this._config.backdrop === 'static') {
-          EventHandler$1.trigger(this._element, EVENT_HIDE_PREVENTED);
+          EventHandler.trigger(this._element, EVENT_HIDE_PREVENTED);
           return;
         }
         this.hide();
@@ -4671,7 +4656,7 @@
 
       // 'static' option will be translated to true, and booleans will keep their value
       const isVisible = Boolean(this._config.backdrop);
-      return new Backdrop$1({
+      return new Backdrop({
         className: CLASS_NAME_BACKDROP,
         isVisible,
         isAnimated: true,
@@ -4680,17 +4665,17 @@
       });
     }
     _initializeFocusTrap() {
-      return new FocusTrap$1({
+      return new FocusTrap({
         trapElement: this._element
       });
     }
     _addEventListeners() {
-      EventHandler$1.on(this._element, EVENT_KEYDOWN_DISMISS, event => {
+      EventHandler.on(this._element, EVENT_KEYDOWN_DISMISS, event => {
         if (event.key !== ESCAPE_KEY) {
           return;
         }
         if (!this._config.keyboard) {
-          EventHandler$1.trigger(this._element, EVENT_HIDE_PREVENTED);
+          EventHandler.trigger(this._element, EVENT_HIDE_PREVENTED);
           return;
         }
         this.hide();
@@ -4716,15 +4701,15 @@
    * Data API implementation
    */
 
-  EventHandler$1.on(document, EVENT_CLICK_DATA_API$1, SELECTOR_DATA_TOGGLE$1, function (event) {
-    const target = SelectorEngine$1.getElementFromSelector(this);
+  EventHandler.on(document, EVENT_CLICK_DATA_API$1, SELECTOR_DATA_TOGGLE$1, function (event) {
+    const target = SelectorEngine.getElementFromSelector(this);
     if (['A', 'AREA'].includes(this.tagName)) {
       event.preventDefault();
     }
     if (isDisabled(this)) {
       return;
     }
-    EventHandler$1.one(target, EVENT_HIDDEN$3, () => {
+    EventHandler.one(target, EVENT_HIDDEN$3, () => {
       // focus on trigger when it is closed
       if (isVisible(this)) {
         this.focus();
@@ -4732,20 +4717,20 @@
     });
 
     // avoid conflict when clicking a toggler of an offcanvas, while another is open
-    const alreadyOpen = SelectorEngine$1.findOne(OPEN_SELECTOR);
+    const alreadyOpen = SelectorEngine.findOne(OPEN_SELECTOR);
     if (alreadyOpen && alreadyOpen !== target) {
       Offcanvas.getInstance(alreadyOpen).hide();
     }
     const data = Offcanvas.getOrCreateInstance(target);
     data.toggle(this);
   });
-  EventHandler$1.on(window, EVENT_LOAD_DATA_API$2, () => {
-    for (const selector of SelectorEngine$1.find(OPEN_SELECTOR)) {
+  EventHandler.on(window, EVENT_LOAD_DATA_API$2, () => {
+    for (const selector of SelectorEngine.find(OPEN_SELECTOR)) {
       Offcanvas.getOrCreateInstance(selector).show();
     }
   });
-  EventHandler$1.on(window, EVENT_RESIZE, () => {
-    for (const element of SelectorEngine$1.find('[aria-modal][class*=show][class*=offcanvas-]')) {
+  EventHandler.on(window, EVENT_RESIZE, () => {
+    for (const element of SelectorEngine.find('[aria-modal][class*=show][class*=offcanvas-]')) {
       if (getComputedStyle(element).position !== 'fixed') {
         Offcanvas.getOrCreateInstance(element).hide();
       }
@@ -4758,7 +4743,6 @@
    */
 
   defineJQueryPlugin(Offcanvas);
-  const Offcanvas$1 = Offcanvas;
 
   /**
    * --------------------------------------------------------------------------
@@ -4895,7 +4879,7 @@
    * Class definition
    */
 
-  class TemplateFactory extends Config$1 {
+  class TemplateFactory extends Config {
     constructor(config) {
       super();
       this._config = this._getConfig(config);
@@ -4955,7 +4939,7 @@
       }
     }
     _setContent(template, content, selector) {
-      const templateElement = SelectorEngine$1.findOne(selector, template);
+      const templateElement = SelectorEngine.findOne(selector, template);
       if (!templateElement) {
         return;
       }
@@ -4989,7 +4973,6 @@
       templateElement.textContent = element.textContent;
     }
   }
-  const TemplateFactory$1 = TemplateFactory;
 
   /**
    * --------------------------------------------------------------------------
@@ -5074,7 +5057,7 @@
    * Class definition
    */
 
-  class Tooltip extends BaseComponent$1 {
+  class Tooltip extends BaseComponent {
     constructor(element, config) {
       if (typeof Popper === 'undefined') {
         throw new TypeError('Bootstrap\'s tooltips require Popper (https://popper.js.org)');
@@ -5132,7 +5115,7 @@
     }
     dispose() {
       clearTimeout(this._timeout);
-      EventHandler$1.off(this._element.closest(SELECTOR_MODAL), EVENT_MODAL_HIDE, this._hideModalHandler);
+      EventHandler.off(this._element.closest(SELECTOR_MODAL), EVENT_MODAL_HIDE, this._hideModalHandler);
       if (this._element.getAttribute('data-bs-original-title')) {
         this._element.setAttribute('title', this._element.getAttribute('data-bs-original-title'));
       }
@@ -5146,7 +5129,7 @@
       if (!(this._isWithContent() && this._isEnabled)) {
         return;
       }
-      const showEvent = EventHandler$1.trigger(this._element, this.constructor.eventName(EVENT_SHOW$2));
+      const showEvent = EventHandler.trigger(this._element, this.constructor.eventName(EVENT_SHOW$2));
       const shadowRoot = findShadowRoot(this._element);
       const isInTheDom = (shadowRoot || this._element.ownerDocument.documentElement).contains(this._element);
       if (showEvent.defaultPrevented || !isInTheDom) {
@@ -5162,7 +5145,7 @@
       } = this._config;
       if (!this._element.ownerDocument.documentElement.contains(this.tip)) {
         container.append(tip);
-        EventHandler$1.trigger(this._element, this.constructor.eventName(EVENT_INSERTED));
+        EventHandler.trigger(this._element, this.constructor.eventName(EVENT_INSERTED));
       }
       this._popper = this._createPopper(tip);
       tip.classList.add(CLASS_NAME_SHOW$2);
@@ -5173,11 +5156,11 @@
       // https://www.quirksmode.org/blog/archives/2014/02/mouse_event_bub.html
       if ('ontouchstart' in document.documentElement) {
         for (const element of [].concat(...document.body.children)) {
-          EventHandler$1.on(element, 'mouseover', noop);
+          EventHandler.on(element, 'mouseover', noop);
         }
       }
       const complete = () => {
-        EventHandler$1.trigger(this._element, this.constructor.eventName(EVENT_SHOWN$2));
+        EventHandler.trigger(this._element, this.constructor.eventName(EVENT_SHOWN$2));
         if (this._isHovered === false) {
           this._leave();
         }
@@ -5189,7 +5172,7 @@
       if (!this._isShown()) {
         return;
       }
-      const hideEvent = EventHandler$1.trigger(this._element, this.constructor.eventName(EVENT_HIDE$2));
+      const hideEvent = EventHandler.trigger(this._element, this.constructor.eventName(EVENT_HIDE$2));
       if (hideEvent.defaultPrevented) {
         return;
       }
@@ -5200,7 +5183,7 @@
       // empty mouseover listeners we added for iOS support
       if ('ontouchstart' in document.documentElement) {
         for (const element of [].concat(...document.body.children)) {
-          EventHandler$1.off(element, 'mouseover', noop);
+          EventHandler.off(element, 'mouseover', noop);
         }
       }
       this._activeTrigger[TRIGGER_CLICK] = false;
@@ -5216,7 +5199,7 @@
           this._disposePopper();
         }
         this._element.removeAttribute('aria-describedby');
-        EventHandler$1.trigger(this._element, this.constructor.eventName(EVENT_HIDDEN$2));
+        EventHandler.trigger(this._element, this.constructor.eventName(EVENT_HIDDEN$2));
       };
       this._queueCallback(complete, this.tip, this._isAnimated());
     }
@@ -5264,7 +5247,7 @@
       if (this._templateFactory) {
         this._templateFactory.changeContent(content);
       } else {
-        this._templateFactory = new TemplateFactory$1({
+        this._templateFactory = new TemplateFactory({
           ...this._config,
           // the `content` var has to be after `this._config`
           // to override config.content in case of popover
@@ -5356,19 +5339,19 @@
       const triggers = this._config.trigger.split(' ');
       for (const trigger of triggers) {
         if (trigger === 'click') {
-          EventHandler$1.on(this._element, this.constructor.eventName(EVENT_CLICK$1), this._config.selector, event => {
+          EventHandler.on(this._element, this.constructor.eventName(EVENT_CLICK$1), this._config.selector, event => {
             const context = this._initializeOnDelegatedTarget(event);
             context.toggle();
           });
         } else if (trigger !== TRIGGER_MANUAL) {
           const eventIn = trigger === TRIGGER_HOVER ? this.constructor.eventName(EVENT_MOUSEENTER) : this.constructor.eventName(EVENT_FOCUSIN$1);
           const eventOut = trigger === TRIGGER_HOVER ? this.constructor.eventName(EVENT_MOUSELEAVE) : this.constructor.eventName(EVENT_FOCUSOUT$1);
-          EventHandler$1.on(this._element, eventIn, this._config.selector, event => {
+          EventHandler.on(this._element, eventIn, this._config.selector, event => {
             const context = this._initializeOnDelegatedTarget(event);
             context._activeTrigger[event.type === 'focusin' ? TRIGGER_FOCUS : TRIGGER_HOVER] = true;
             context._enter();
           });
-          EventHandler$1.on(this._element, eventOut, this._config.selector, event => {
+          EventHandler.on(this._element, eventOut, this._config.selector, event => {
             const context = this._initializeOnDelegatedTarget(event);
             context._activeTrigger[event.type === 'focusout' ? TRIGGER_FOCUS : TRIGGER_HOVER] = context._element.contains(event.relatedTarget);
             context._leave();
@@ -5380,7 +5363,7 @@
           this.hide();
         }
       };
-      EventHandler$1.on(this._element.closest(SELECTOR_MODAL), EVENT_MODAL_HIDE, this._hideModalHandler);
+      EventHandler.on(this._element.closest(SELECTOR_MODAL), EVENT_MODAL_HIDE, this._hideModalHandler);
     }
     _fixTitle() {
       const title = this._element.getAttribute('title');
@@ -5424,7 +5407,7 @@
       return Object.values(this._activeTrigger).includes(true);
     }
     _getConfig(config) {
-      const dataAttributes = Manipulator$1.getDataAttributes(this._element);
+      const dataAttributes = Manipulator.getDataAttributes(this._element);
       for (const dataAttribute of Object.keys(dataAttributes)) {
         if (DISALLOWED_ATTRIBUTES.has(dataAttribute)) {
           delete dataAttributes[dataAttribute];
@@ -5501,7 +5484,6 @@
    */
 
   defineJQueryPlugin(Tooltip);
-  const Tooltip$1 = Tooltip;
 
   /**
    * --------------------------------------------------------------------------
@@ -5518,7 +5500,7 @@
   const SELECTOR_TITLE = '.popover-header';
   const SELECTOR_CONTENT = '.popover-body';
   const Default$2 = {
-    ...Tooltip$1.Default,
+    ...Tooltip.Default,
     content: '',
     offset: [0, 8],
     placement: 'right',
@@ -5526,7 +5508,7 @@
     trigger: 'click'
   };
   const DefaultType$2 = {
-    ...Tooltip$1.DefaultType,
+    ...Tooltip.DefaultType,
     content: '(null|string|element|function)'
   };
 
@@ -5534,7 +5516,7 @@
    * Class definition
    */
 
-  class Popover extends Tooltip$1 {
+  class Popover extends Tooltip {
     // Getters
     static get Default() {
       return Default$2;
@@ -5582,7 +5564,6 @@
    */
 
   defineJQueryPlugin(Popover);
-  const Popover$1 = Popover;
 
   /**
    * --------------------------------------------------------------------------
@@ -5634,7 +5615,7 @@
    * Class definition
    */
 
-  class ScrollSpy extends BaseComponent$1 {
+  class ScrollSpy extends BaseComponent {
     constructor(element, config) {
       super(element, config);
 
@@ -5698,8 +5679,8 @@
       }
 
       // unregister any previous listeners
-      EventHandler$1.off(this._config.target, EVENT_CLICK);
-      EventHandler$1.on(this._config.target, EVENT_CLICK, SELECTOR_TARGET_LINKS, event => {
+      EventHandler.off(this._config.target, EVENT_CLICK);
+      EventHandler.on(this._config.target, EVENT_CLICK, SELECTOR_TARGET_LINKS, event => {
         const observableSection = this._observableSections.get(event.target.hash);
         if (observableSection) {
           event.preventDefault();
@@ -5763,13 +5744,13 @@
     _initializeTargetsAndObservables() {
       this._targetLinks = new Map();
       this._observableSections = new Map();
-      const targetLinks = SelectorEngine$1.find(SELECTOR_TARGET_LINKS, this._config.target);
+      const targetLinks = SelectorEngine.find(SELECTOR_TARGET_LINKS, this._config.target);
       for (const anchor of targetLinks) {
         // ensure that the anchor has an id and is not disabled
         if (!anchor.hash || isDisabled(anchor)) {
           continue;
         }
-        const observableSection = SelectorEngine$1.findOne(anchor.hash, this._element);
+        const observableSection = SelectorEngine.findOne(anchor.hash, this._element);
 
         // ensure that the observableSection exists & is visible
         if (isVisible(observableSection)) {
@@ -5786,27 +5767,27 @@
       this._activeTarget = target;
       target.classList.add(CLASS_NAME_ACTIVE$1);
       this._activateParents(target);
-      EventHandler$1.trigger(this._element, EVENT_ACTIVATE, {
+      EventHandler.trigger(this._element, EVENT_ACTIVATE, {
         relatedTarget: target
       });
     }
     _activateParents(target) {
       // Activate dropdown parents
       if (target.classList.contains(CLASS_NAME_DROPDOWN_ITEM)) {
-        SelectorEngine$1.findOne(SELECTOR_DROPDOWN_TOGGLE$1, target.closest(SELECTOR_DROPDOWN)).classList.add(CLASS_NAME_ACTIVE$1);
+        SelectorEngine.findOne(SELECTOR_DROPDOWN_TOGGLE$1, target.closest(SELECTOR_DROPDOWN)).classList.add(CLASS_NAME_ACTIVE$1);
         return;
       }
-      for (const listGroup of SelectorEngine$1.parents(target, SELECTOR_NAV_LIST_GROUP)) {
+      for (const listGroup of SelectorEngine.parents(target, SELECTOR_NAV_LIST_GROUP)) {
         // Set triggered links parents as active
         // With both <ul> and <nav> markup a parent is the previous sibling of any nav ancestor
-        for (const item of SelectorEngine$1.prev(listGroup, SELECTOR_LINK_ITEMS)) {
+        for (const item of SelectorEngine.prev(listGroup, SELECTOR_LINK_ITEMS)) {
           item.classList.add(CLASS_NAME_ACTIVE$1);
         }
       }
     }
     _clearActiveClass(parent) {
       parent.classList.remove(CLASS_NAME_ACTIVE$1);
-      const activeNodes = SelectorEngine$1.find(`${SELECTOR_TARGET_LINKS}.${CLASS_NAME_ACTIVE$1}`, parent);
+      const activeNodes = SelectorEngine.find(`${SELECTOR_TARGET_LINKS}.${CLASS_NAME_ACTIVE$1}`, parent);
       for (const node of activeNodes) {
         node.classList.remove(CLASS_NAME_ACTIVE$1);
       }
@@ -5831,8 +5812,8 @@
    * Data API implementation
    */
 
-  EventHandler$1.on(window, EVENT_LOAD_DATA_API$1, () => {
-    for (const spy of SelectorEngine$1.find(SELECTOR_DATA_SPY)) {
+  EventHandler.on(window, EVENT_LOAD_DATA_API$1, () => {
+    for (const spy of SelectorEngine.find(SELECTOR_DATA_SPY)) {
       ScrollSpy.getOrCreateInstance(spy);
     }
   });
@@ -5842,7 +5823,6 @@
    */
 
   defineJQueryPlugin(ScrollSpy);
-  const ScrollSpy$1 = ScrollSpy;
 
   /**
    * --------------------------------------------------------------------------
@@ -5887,7 +5867,7 @@
    * Class definition
    */
 
-  class Tab extends BaseComponent$1 {
+  class Tab extends BaseComponent {
     constructor(element) {
       super(element);
       this._parent = this._element.closest(SELECTOR_TAB_PANEL);
@@ -5899,7 +5879,7 @@
 
       // Set up initial aria attributes
       this._setInitialAttributes(this._parent, this._getChildren());
-      EventHandler$1.on(this._element, EVENT_KEYDOWN, event => this._keydown(event));
+      EventHandler.on(this._element, EVENT_KEYDOWN, event => this._keydown(event));
     }
 
     // Getters
@@ -5917,10 +5897,10 @@
 
       // Search for active tab on same parent to deactivate it
       const active = this._getActiveElem();
-      const hideEvent = active ? EventHandler$1.trigger(active, EVENT_HIDE$1, {
+      const hideEvent = active ? EventHandler.trigger(active, EVENT_HIDE$1, {
         relatedTarget: innerElem
       }) : null;
-      const showEvent = EventHandler$1.trigger(innerElem, EVENT_SHOW$1, {
+      const showEvent = EventHandler.trigger(innerElem, EVENT_SHOW$1, {
         relatedTarget: active
       });
       if (showEvent.defaultPrevented || hideEvent && hideEvent.defaultPrevented) {
@@ -5936,7 +5916,7 @@
         return;
       }
       element.classList.add(CLASS_NAME_ACTIVE);
-      this._activate(SelectorEngine$1.getElementFromSelector(element)); // Search and activate/show the proper section
+      this._activate(SelectorEngine.getElementFromSelector(element)); // Search and activate/show the proper section
 
       const complete = () => {
         if (element.getAttribute('role') !== 'tab') {
@@ -5946,7 +5926,7 @@
         element.removeAttribute('tabindex');
         element.setAttribute('aria-selected', true);
         this._toggleDropDown(element, true);
-        EventHandler$1.trigger(element, EVENT_SHOWN$1, {
+        EventHandler.trigger(element, EVENT_SHOWN$1, {
           relatedTarget: relatedElem
         });
       };
@@ -5958,7 +5938,7 @@
       }
       element.classList.remove(CLASS_NAME_ACTIVE);
       element.blur();
-      this._deactivate(SelectorEngine$1.getElementFromSelector(element)); // Search and deactivate the shown section too
+      this._deactivate(SelectorEngine.getElementFromSelector(element)); // Search and deactivate the shown section too
 
       const complete = () => {
         if (element.getAttribute('role') !== 'tab') {
@@ -5968,7 +5948,7 @@
         element.setAttribute('aria-selected', false);
         element.setAttribute('tabindex', '-1');
         this._toggleDropDown(element, false);
-        EventHandler$1.trigger(element, EVENT_HIDDEN$1, {
+        EventHandler.trigger(element, EVENT_HIDDEN$1, {
           relatedTarget: relatedElem
         });
       };
@@ -5991,7 +5971,7 @@
     }
     _getChildren() {
       // collection of inner elements
-      return SelectorEngine$1.find(SELECTOR_INNER_ELEM, this._parent);
+      return SelectorEngine.find(SELECTOR_INNER_ELEM, this._parent);
     }
     _getActiveElem() {
       return this._getChildren().find(child => this._elemIsActive(child)) || null;
@@ -6019,7 +5999,7 @@
       this._setInitialAttributesOnTargetPanel(child);
     }
     _setInitialAttributesOnTargetPanel(child) {
-      const target = SelectorEngine$1.getElementFromSelector(child);
+      const target = SelectorEngine.getElementFromSelector(child);
       if (!target) {
         return;
       }
@@ -6034,7 +6014,7 @@
         return;
       }
       const toggle = (selector, className) => {
-        const element = SelectorEngine$1.findOne(selector, outerElem);
+        const element = SelectorEngine.findOne(selector, outerElem);
         if (element) {
           element.classList.toggle(className, open);
         }
@@ -6054,7 +6034,7 @@
 
     // Try to get the inner element (usually the .nav-link)
     _getInnerElement(elem) {
-      return elem.matches(SELECTOR_INNER_ELEM) ? elem : SelectorEngine$1.findOne(SELECTOR_INNER_ELEM, elem);
+      return elem.matches(SELECTOR_INNER_ELEM) ? elem : SelectorEngine.findOne(SELECTOR_INNER_ELEM, elem);
     }
 
     // Try to get the outer element (usually the .nav-item)
@@ -6081,7 +6061,7 @@
    * Data API implementation
    */
 
-  EventHandler$1.on(document, EVENT_CLICK_DATA_API, SELECTOR_DATA_TOGGLE, function (event) {
+  EventHandler.on(document, EVENT_CLICK_DATA_API, SELECTOR_DATA_TOGGLE, function (event) {
     if (['A', 'AREA'].includes(this.tagName)) {
       event.preventDefault();
     }
@@ -6094,8 +6074,8 @@
   /**
    * Initialize on focus
    */
-  EventHandler$1.on(window, EVENT_LOAD_DATA_API, () => {
-    for (const element of SelectorEngine$1.find(SELECTOR_DATA_TOGGLE_ACTIVE)) {
+  EventHandler.on(window, EVENT_LOAD_DATA_API, () => {
+    for (const element of SelectorEngine.find(SELECTOR_DATA_TOGGLE_ACTIVE)) {
       Tab.getOrCreateInstance(element);
     }
   });
@@ -6104,7 +6084,6 @@
    */
 
   defineJQueryPlugin(Tab);
-  const Tab$1 = Tab;
 
   /**
    * --------------------------------------------------------------------------
@@ -6147,7 +6126,7 @@
    * Class definition
    */
 
-  class Toast extends BaseComponent$1 {
+  class Toast extends BaseComponent {
     constructor(element, config) {
       super(element, config);
       this._timeout = null;
@@ -6169,7 +6148,7 @@
 
     // Public
     show() {
-      const showEvent = EventHandler$1.trigger(this._element, EVENT_SHOW);
+      const showEvent = EventHandler.trigger(this._element, EVENT_SHOW);
       if (showEvent.defaultPrevented) {
         return;
       }
@@ -6179,7 +6158,7 @@
       }
       const complete = () => {
         this._element.classList.remove(CLASS_NAME_SHOWING);
-        EventHandler$1.trigger(this._element, EVENT_SHOWN);
+        EventHandler.trigger(this._element, EVENT_SHOWN);
         this._maybeScheduleHide();
       };
       this._element.classList.remove(CLASS_NAME_HIDE); // @deprecated
@@ -6191,14 +6170,14 @@
       if (!this.isShown()) {
         return;
       }
-      const hideEvent = EventHandler$1.trigger(this._element, EVENT_HIDE);
+      const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE);
       if (hideEvent.defaultPrevented) {
         return;
       }
       const complete = () => {
         this._element.classList.add(CLASS_NAME_HIDE); // @deprecated
         this._element.classList.remove(CLASS_NAME_SHOWING, CLASS_NAME_SHOW);
-        EventHandler$1.trigger(this._element, EVENT_HIDDEN);
+        EventHandler.trigger(this._element, EVENT_HIDDEN);
       };
       this._element.classList.add(CLASS_NAME_SHOWING);
       this._queueCallback(complete, this._element, this._config.animation);
@@ -6253,10 +6232,10 @@
       this._maybeScheduleHide();
     }
     _setListeners() {
-      EventHandler$1.on(this._element, EVENT_MOUSEOVER, event => this._onInteraction(event, true));
-      EventHandler$1.on(this._element, EVENT_MOUSEOUT, event => this._onInteraction(event, false));
-      EventHandler$1.on(this._element, EVENT_FOCUSIN, event => this._onInteraction(event, true));
-      EventHandler$1.on(this._element, EVENT_FOCUSOUT, event => this._onInteraction(event, false));
+      EventHandler.on(this._element, EVENT_MOUSEOVER, event => this._onInteraction(event, true));
+      EventHandler.on(this._element, EVENT_MOUSEOUT, event => this._onInteraction(event, false));
+      EventHandler.on(this._element, EVENT_FOCUSIN, event => this._onInteraction(event, true));
+      EventHandler.on(this._element, EVENT_FOCUSOUT, event => this._onInteraction(event, false));
     }
     _clearTimeout() {
       clearTimeout(this._timeout);
@@ -6288,7 +6267,6 @@
    */
 
   defineJQueryPlugin(Toast);
-  const Toast$1 = Toast;
 
   /**
    * --------------------------------------------------------------------------
@@ -6297,18 +6275,18 @@
    * --------------------------------------------------------------------------
    */
   const index_umd = {
-    Alert: Alert$1,
-    Button: Button$1,
-    Carousel: Carousel$1,
-    Collapse: Collapse$1,
-    Dropdown: Dropdown$1,
-    Modal: Modal$1,
-    Offcanvas: Offcanvas$1,
-    Popover: Popover$1,
-    ScrollSpy: ScrollSpy$1,
-    Tab: Tab$1,
-    Toast: Toast$1,
-    Tooltip: Tooltip$1
+    Alert,
+    Button,
+    Carousel,
+    Collapse,
+    Dropdown,
+    Modal,
+    Offcanvas,
+    Popover,
+    ScrollSpy,
+    Tab,
+    Toast,
+    Tooltip
   };
 
   return index_umd;
