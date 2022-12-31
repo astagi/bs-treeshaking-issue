@@ -10,7 +10,8 @@
     <script type="importmap">
         {
             "imports": {
-                "@popperjs/core": "/bootstrap/node_modules/@popperjs/core/dist/esm/index.js"
+                "@popperjs/core": "/bootstrap/node_modules/@popperjs/core/dist/esm/index.js",
+                "bootstrap": "/bootstrap/dist/js/bootstrap.esm.js"
             }
         }
     </script>
@@ -53,7 +54,7 @@
         </div>
     </div>
     <script async type="module">
-        import { Alert, Tooltip } from '/bootstrap/dist/js/bootstrap.esm.js'
+        import { Alert, Tooltip } from 'bootstrap'
 
         const alert = new Alert(document.getElementsByClassName('alert')[0])
 
