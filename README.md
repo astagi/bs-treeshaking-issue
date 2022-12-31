@@ -28,6 +28,8 @@ using
 npm run serve
 ```
 
+If you want to see the behavior of Bootstrap loaded from browser go to [http://localhost:8080/trymodules.html](http://localhost:8080/trymodules.html).
+
 ## Results
 
 Inside `dist` folder for each project you can see the js bundle. As you can
